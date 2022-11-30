@@ -1,0 +1,160 @@
+<div id="overlay" *ngIf="isLoading">
+  <div class="overlay-content">
+      <div class="spinner-border"></div>
+  </div>
+</div>
+<div class="page-wrapper" id="order_success_page_wraper">
+    <div class="container cart-home" id="order_success_page">
+        <div class="row" id="payment_method_mobile">
+            <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8 px-0" id="success_box">
+                <form [formGroup]="paymentMode">
+                <h4 *ngIf="errMsg" class="text-danger">{{errMsg}}</h4>
+
+                <div class="deliveryTime mb-5">
+                  <!-- <h4 class="title">{{orderTimeTitle}}</h4> -->
+                  <div class="accordion accordion-flush accordion-wrapper" id="accordionFlushExample1">
+
+                    <div class="accordion-item">
+                      <h2 class="accordion-header">
+                        <div class="accordion-item" *ngIf="orderTimes.length">
+                            <h4 class="accordion-header itle-h3">{{orderTimeTitle}}</h4>
+                            <button class="accordion-button1" type="button" data-bs-toggle="collapse">
+                              <div class="form-check">
+                                <input class="form-check-input" (ngModelChange)="setDeliveryOption()" type="radio" value="TodayOrder" formControlName="advanceOrder" name="advanceOrder">
+                                <select  class="form-control" formControlName="orderTime" (change)="setOrderTime()">
+                                  <option [disabled]="paymentMode.get('advanceOrder').value == 'AdvanceOrder'" *ngFor="let times of orderTimes" value="{{times}}">{{times}}</option>
+                                </select>
+                              </div>
+
+                            </button>
+                        </div>
+
+                          <div class="accordion-item">
+                            <h4 class="accordion-header title-h3"> Vorbestellen <!-- Advance Order --> </h4>
+                            <div class="accordion-button1 collapsed" type="button" data-bs-toggle="collapse">
+                              <div class="form-check">
+                                <input class="form-check-input" (ngModelChange)="setDeliveryOption()" type="radio" value="AdvanceOrder" formControlName="advanceOrder" name="advanceOrder">
+
+                                <!-- <div>
+                                  <mat-form-field appearance="fill" color="accent" (click)="picker.open()">
+                                    <mat-label>Choose a date</mat-label>
+                                    <input matInput [matDatepicker]="picker" readonly>
+                                    <input matInput [matDatepicker]="picker" [matDatepickerFilter]="datesFilter"
+                                          [min]="minDate" [max]="maxDate" readonly>
+                                    <mat-icon matSuffix class="faMatIcons"><i class="far fa-calendar-alt"></i></mat-icon>
+                                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                                    <mat-datepicker touchUi #picker></mat-datepicker>
+                                  </mat-form-field>
+                                </div>
+
+                                <mat-form-field appearance="fill" (click)="timePicker.open()">
+                                  <mat-label>Choose a time</mat-label>
+                                  <input matInput [ngxTimepicker]="timePicker" [format]="24" readonly>
+                                  <mat-icon matSuffix class="faMatIcons"><i class="far fa-clock"></i></mat-icon>
+                                  <ngx-material-timepicker-toggle [for]="timePicker"></ngx-material-timepicker-toggle>
+                                  <ngx-material-timepicker #timePicker></ngx-material-timepicker>
+                                </mat-form-field> -->
+
+                                <label class="title-h4">
+                                  Date Time:
+                                  <input class="mx-2" id="owlInput" [owlDateTimeFilter]="datesFilter" [min]="minDate" [max]="maxDate" [owlDateTime]="dt2" [owlDateTimeTrigger]="dt2" (dateTimeChange)="setAdvanceOrderDateTime($event)">
+                                  <span>
+                                      <i class="fas fa-calendar-alt"></i>
+                                  </span>
+                                  <owl-date-time [pickerMode]="'dialog'" [startAt]="startAt" #dt2 [disabled]="paymentMode.get('advanceOrder').value == 'TodayOrder'"></owl-date-time>
+                                </label>
+                              </div>
+                            </div>
+                          </div>
+
+                            <div class="tip-input">
+                              <label> Trinkgeld <!-- Would You like To Tip? --></label>
+                              <div>
+                                <mat-form-field appearance="standard" [floatLabel]="'never'" class="tip-form">
+                                  <input type="number" matInput placeholder="Ex: 5 or 10 or 20" formControlName="tip" (input)="setTipOption()">
+                                </mat-form-field>
+                              </div>
+                            </div>
+                      </h2>
+                    </div>
+
+                  </div>
+                </div>
+
+               <div *ngIf="isTimeAcceptable">
+                <div class="payment_method_box">
+                    <h4 class="title"> Wie möchten Sie bezahlen?<!-- How would You like to pay? --></h4>
+                    <div class="accordion accordion-flush" id="accordionFlushExample">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="cashondelivery">
+                                <button class="accordion-button1 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#cashondelivery" aria-expanded="false" aria-controls="cashondelivery">
+                                <div class="form-check">
+                                    <input class="form-check-input" (ngModelChange)="setPaymentMode()" type="radio" value="Barzahlung" formControlName="mode" name="mode" id="cashon">
+                                    <label class="form-check-label" for="cashon">
+                                        Barzahlung <!--  Cash on Delivery -->
+                                    </label>
+                                    <img src="../../assets/images/cash-icon-29.jpg" class="cash-image pl-4" alt="">
+                                </div>
+
+                            </button>
+                            </h2>
+                        </div>
+
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="paywithpaypal">
+                                <button class="accordion-button1 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#paywithpaypal" aria-expanded="false" aria-controls="paywithpaypal">
+                                <div class="form-check">
+                                    <input class="form-check-input" (ngModelChange)="setPaymentMode()" type="radio" value="Online" formControlName="mode" name="mode" id="paypal">
+                                    <label class="form-check-label" for="paypal">Paypal</label>
+                                    <img src="../../assets/images/paypal_icon.png" class="cash-image pl-4" alt="">
+                                  </div>
+                                </button>
+                            </h2>
+
+                            <div [ngClass]="payMode == 'Barzahlung' ? 'paymentBtnDisabled' : ''">
+                              <ngx-paypal *ngIf="orderTime" [config]="payPalConfig"></ngx-paypal>
+                            </div>
+
+                            <!--<div id="paywithpaypal" class="accordion-collapse collapse" aria-labelledby="paywithpaypal" data-bs-parent="#accordionFlushExample">
+                                <div class="accordion-body">Placeholder content for this accordion, which is intended to demonstrate the <code>.accordion-flush</code> class. This is the second item's accordion body. Let's imagine this being filled with some actual content.</div>
+                            </div>-->
+                        </div>
+
+                    </div>
+                </div>
+              <br>
+
+              <div class="text-center" *ngIf="payMode == 'Barzahlung'">
+                <button class='btn-danger btn btn-lg btn-block' style="color: white" *ngIf="orderTime"
+                   (click)="redirect()">
+                   Bestellen  <!-- Place Order -->
+				        </button>
+              </div>
+            </div>
+              </form>
+
+                <div *ngIf="isTimeAcceptable == false && !isHoliday && paymentMode.get('advanceOrder').value == 'AdvanceOrder'">
+                  Bestellung konnte nicht aufgegeben werden...Bitte wählen Sie aus den unten verfügbaren Slots aus. <!-- Could not place order...Please choose from below available slots. -->
+                  <ul class="timeSlots">
+                    <li *ngFor="let time of siteDetails.timeSlots">
+                      (
+                      <ng-container *ngFor="let day of time.days">
+                        {{day}},
+                      </ng-container>
+                      ) from {{time.openTime | slice:0:-3}} to {{time.closeTime | slice:0:-3}}
+                    </li>
+                  </ul>
+                </div>
+
+                 <div *ngIf="isHoliday && paymentMode.get('advanceOrder').value == 'AdvanceOrder'">
+                  Bestellung konnte nicht aufgegeben werden... <!--  Could not place order... -->
+                 <span class="holiday-msg">{{holidayMessage}}</span>.
+                </div>
+            </div>
+
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-4 pr-1" id="checkout">
+                <app-your-order></app-your-order>
+            </div>
+        </div>
+    </div>
+</div>
